@@ -14,10 +14,52 @@ class Command():
     def GetCommand(self,key_list=[]):
         if key_list[11]: #info
             print(self.tips)
-        elif key_list[10]: #check
-            pass
-        elif key_list[9]: #get
-            pass
+
+        elif key_list[10] and key_list[2] and key_list[12]: #check
+            self.Database_Path=sys.path[0]+"/databases/"+key_list[2]
+            self.Database_List_Path = self.Database_Path + "/" + key_list[12] + ".db"
+            if not os.path.exists(self.Database_Path):
+                print('No database named '+key_list[2])
+                exit()
+            elif not os.path.exists(self.Database_List_Path):
+                print('Database List '+key_list[12]+' is not exist!')
+                exit()
+            with open(self.Database_List_Path,'r',encoding='utf-8') as DatabaseListFile:
+                DatabaseListText_List=DatabaseListFile.readlines()
+                i=0
+                t=""
+                while i<len(DatabaseListText_List):
+                    DatabaseListText_List[i]=DatabaseListText_List[i].replace("\n","").split('	')
+                    if key_list[10][0]==DatabaseListText_List[i][0] and key_list[10][1]==DatabaseListText_List[i][1]:
+                        print("True",end='')
+                        exit()
+                    i+=1
+                print("False")
+
+
+        elif key_list[9] and key_list[2] and key_list[12]: #get
+            self.Database_Path=sys.path[0]+"/databases/"+key_list[2]
+            self.Database_List_Path = self.Database_Path + "/" + key_list[12] + ".db"
+            if not os.path.exists(self.Database_Path):
+                print('No database named '+key_list[2])
+                exit()
+            elif not os.path.exists(self.Database_List_Path):
+                print('Database List '+key_list[12]+' is not exist!')
+                exit()
+            with open(self.Database_List_Path,'r',encoding='utf-8') as DatabaseListFile:
+                DatabaseListText_List=DatabaseListFile.readlines()
+                i=0
+                t=""
+                while i<len(DatabaseListText_List):
+                    DatabaseListText_List[i]=DatabaseListText_List[i].split('	')
+                    i+=1
+                for t in DatabaseListText_List:
+                    if key_list[9]==t[0]:
+                        print(t[1],end='')
+                        exit()
+                print("No Var named "+key_list[9])
+
+
         elif key_list[7]: #Create
             self.Create_Path=sys.path[0].replace("\\","/")+"/databases/"+str(key_list[7])
             if os.path.exists(self.Create_Path):
@@ -41,29 +83,62 @@ class Command():
                         print("Delete "+str(key_list[8])+" Succeed!")
             else:
                 print("No database named "+key_list[8])
+
+
         elif key_list[5] and key_list[2] and key_list[12]: #Add
             self.Database_Path=sys.path[0]+"/databases/"+key_list[2]
             self.Database_List_Path = self.Database_Path + "/" + key_list[12] + ".db"
             if not os.path.exists(self.Database_Path):
-                print('No database named'+key_list[2])
+                print('No database named '+key_list[2])
                 exit()
             elif not os.path.exists(self.Database_List_Path):
                 print('Database List '+key_list[12]+' is not exist!')
                 exit()
-            with open(self.Database_List_Path,'a+',encoding='utf-8') as DatabaseListFile:
+            with open(self.Database_List_Path,'r',encoding='utf-8') as DatabaseListFile:
                 DatabaseListText_List=DatabaseListFile.readlines()
                 i=0
                 t=""
                 while i<len(DatabaseListText_List):
-                    DatabaseListText_List[i]=DatabaseListText_List[i].split('   ')
+                    DatabaseListText_List[i]=DatabaseListText_List[i].split('	')
                     i+=1
+            with open(self.Database_List_Path,'a+',encoding='utf-8') as DatabaseListFile:
                 for t in DatabaseListText_List:
-                    pass
-                    #if t[0]==key_list[5]:
+                    if t[0]==key_list[5][0]:
+                        print("Var is exist!")
+                        exit()
+                DatabaseListFile.write(key_list[5][0]+'	'+key_list[5][1]+"\n")
+                print(key_list[5][0]+" is add!")
 
 
-        elif key_list[6]: #Remove
-            pass
+        elif key_list[6] and key_list[2] and key_list[12]: #Remove
+            self.Database_Path=sys.path[0]+"/databases/"+key_list[2]
+            self.Database_List_Path = self.Database_Path + "/" + key_list[12] + ".db"
+            if not os.path.exists(self.Database_Path):
+                print('No database named '+key_list[2])
+                exit()
+            elif not os.path.exists(self.Database_List_Path):
+                print('Database List '+key_list[12]+' is not exist!')
+                exit()
+            with open(self.Database_List_Path,'r',encoding='utf-8') as DatabaseListFile:
+                DatabaseListText_List=DatabaseListFile.readlines()
+                i=0
+                t=""
+                while i<len(DatabaseListText_List):
+                    DatabaseListText_List[i]=DatabaseListText_List[i].split('	')
+                    i+=1
+            with open(self.Database_List_Path,'w',encoding='utf-8') as DatabaseListFile:
+                i=0
+                while i<len(DatabaseListText_List):
+                    if DatabaseListText_List[i][0] == key_list[6]:
+                        DatabaseListText_List.pop(i)
+                        for t in DatabaseListText_List:
+                            DatabaseListFile.write(t[0]+"	"+t[1])
+                        print("var "+key_list[6]+" is remove!")
+                        exit()
+                    i+=1
+                print("Var is not exist!")
+
+
         elif key_list[2] and key_list[3]: #Adddatabaselist
             self.Database_Path=sys.path[0]+"/databases/"+key_list[2]
             self.Database_List_Path=self.Database_Path+"/"+key_list[3]+".db"
@@ -76,6 +151,8 @@ class Command():
             else:
                 with open(self.Database_List_Path,"w",encoding="utf-8"):
                     print("DatabaseList create succeed!")
+
+
         elif key_list[2] and key_list[4]: #Removedatabaselist
             self.Database_Path=sys.path[0]+"/databases/"+key_list[2]
             self.Database_List_Path = self.Database_Path + "/" + key_list[4] + ".db"
