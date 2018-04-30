@@ -9,7 +9,10 @@ class Command():
 
     def Update(self,commandlist=[]):
         self.__commandlist = commandlist
-        self.GetCommand(self.__commandlist)
+        try:
+            self.GetCommand(self.__commandlist)
+        except IOError:
+            print(IOError)
 
     def GetCommand(self,key_list=[]):
         if key_list[11]: #info
@@ -104,7 +107,7 @@ class Command():
             with open(self.Database_List_Path,'a+',encoding='utf-8') as DatabaseListFile:
                 for t in DatabaseListText_List:
                     if t[0]==key_list[5][0]:
-                        print("Var is exist!")
+                        print("Var "+key_list[5][0]+" is exist!")
                         exit()
                 DatabaseListFile.write(key_list[5][0]+'	'+key_list[5][1]+"\n")
                 print(key_list[5][0]+" is add!")
@@ -138,6 +141,27 @@ class Command():
                     i+=1
                 print("Var is not exist!")
 
+        elif key_list[13] and key_list[2] and key_list[12]: # Update
+            self.Database_Path=sys.path[0]+"/databases/"+key_list[2]
+            self.Database_List_Path = self.Database_Path + "/" + key_list[12] + ".db"
+            if not os.path.exists(self.Database_Path):
+                print('No database named '+key_list[2])
+                exit()
+            elif not os.path.exists(self.Database_List_Path):
+                print('Database List '+key_list[12]+' is not exist!')
+                exit()
+            with open(self.Database_List_Path,'r',encoding='utf-8') as DatabaseListFile:
+                DatabaseListText_List=DatabaseListFile.readlines()
+                for i in range(len(DatabaseListText_List)):
+                    DatabaseListText_List[i]=DatabaseListText_List[i].strip().split('\t')
+                DatabaseListText_Dict=dict(DatabaseListText_List)
+            if key_list[13][0] in DatabaseListText_Dict.keys():
+                DatabaseListText_Dict[key_list[13][0]]=key_list[13][1]
+            else:
+                DatabaseListText_Dict[key_list[13][0]]=key_list[13][1]
+            with open(self.Database_List_Path,'w',encoding='utf-8') as DatabaseListFile :
+                for DatabaseListTextDict_Key in DatabaseListText_Dict:
+                    DatabaseListFile.write(DatabaseListTextDict_Key+"\t"+DatabaseListText_Dict[DatabaseListTextDict_Key]+"\n")
 
         elif key_list[2] and key_list[3]: #Adddatabaselist
             self.Database_Path=sys.path[0]+"/databases/"+key_list[2]

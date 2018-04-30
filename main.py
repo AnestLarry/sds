@@ -10,6 +10,7 @@ fileparser.add_argument('-AddDatabaseList',default="",help='Database\'s list Nam
 fileparser.add_argument('-RemoveDatabaseList',default="",help='Database\'s list Name')
 fileparser.add_argument('-Add',default=[],nargs=2,help='add var to database before into a database')
 fileparser.add_argument('-Remove',default=[],help='remove var to database before into a database')
+fileparser.add_argument('-Update',default=[],nargs=2,help='Update var to database before into a database')
 fileparser.add_argument('-Create',default="",help='create a database before log in')
 fileparser.add_argument('-Del',default="",help='delete a database before log in')
 fileparser.add_argument('-Get',default="",help='get a var in a database before into a databaselist')
@@ -17,7 +18,7 @@ fileparser.add_argument('-Check',default="",nargs=2,help='check your var ture or
 fileparser.add_argument('-info',default=False,help='true to get command info next')
 
 fileargs = fileparser.parse_args()
-file_args_list=[""]*13
+file_args_list=[""]*14
 try:
     file_args_list[0]=fileargs.Account
     file_args_list[1]=fileargs.Password
@@ -32,6 +33,7 @@ try:
     file_args_list[10]=fileargs.Check
     file_args_list[11]=fileargs.info
     file_args_list[12]=fileargs.DatabaseList
+    file_args_list[13]=fileargs.Update
 except IOError:
     print(IOError)
 
