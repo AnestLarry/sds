@@ -309,7 +309,7 @@ if __name__ == '__main__' :
         print(IOError)
 
     if not file_args_list[15]:
-        GetCommand_app = GetCommand.Command()
+        GetCommand_app = CommandMode.Command()
         GetCommand_app.Update(file_args_list)
         exit()
     else:
