@@ -1,4 +1,4 @@
-import os,sys
+import os,sys,zipfile,time
 import shutil #del dir
 
 class Command():
@@ -151,4 +151,29 @@ class Command():
                 for i in range(len(DatabaseListText_List)):
                     DatabaseListFile.write(DatabaseListText_List[i])
                 print(key_list[12]+'sort Finished')
+
+        elif key_list[16] and key_list[2] : #backup
+            self.Database_Path = sys.path[0] + "/databases/" + key_list[2]
+            if not os.path.exists(self.Database_Path):
+                print('No database named '+key_list[2])
+                exit()
+            else:
+                backup_zip = zipfile.ZipFile(str(key_list[2])+"_"+time.strftime("%Y-%m-%d_%H-%M-%S")+".zip",'w')
+                for folder, subfolders, files in os.walk("databases/"+key_list[2]):
+                    for filename in files:
+                        print(str(os.path.relpath(os.path.join(folder,filename))))
+                        backup_zip.write(os.path.join(folder,filename),key_list[2]+"/"+filename,compress_type=zipfile.ZIP_DEFLATED)
+                backup_zip.close()
+                print(key_list[2]+'backup succed')
+
+        elif key_list[17] and key_list[2] : #restore
+            self.Database_Path = sys.path[0] + "/databases/" + key_list[2]
+            if os.path.exists(self.Database_Path):
+                print(key_list[2]+' Database is exist')
+                exit()
+            else:
+                restore_zip = zipfile.ZipFile(key_list[17],'r')
+                restore_zip.extractall("databases")
+                restore_zip.close()
+                print("restore succ")
 

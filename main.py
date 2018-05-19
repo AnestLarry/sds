@@ -1,4 +1,4 @@
-import argparse , os ,sys ,shutil
+import argparse , os ,sys ,shutil ,zipfile ,time
 import CommandMode
 
 class sds_Shell:
@@ -257,6 +257,31 @@ info / status / exit / quit / cls / help
                  """
                 print(self.help)
 
+            elif self.Command[0] == 'Backup' and self.Command[1]:
+                if not os.path.exists("databases/" + self.Command[1]):
+                    print("No Database named "+self.Command[1])
+                elif not os.path.exists(self.Database_Path):
+                    print('No database named ' + self.Database_Path)
+                else:
+                    backup_zip = zipfile.ZipFile(str(sys.path[0]) + "/"+ self.Command[1] + "_" + time.strftime("%Y-%m-%d_%H-%M-%S") + ".zip",
+                                                 'w')
+                    for folder, subfolders, files in os.walk("databases/" + self.Command[1]):
+                        for filename in files:
+                            print(str(os.path.relpath(os.path.join(folder, filename))))
+                            backup_zip.write(os.path.join(folder, filename), self.Command[1] + "/" + filename,
+                                             compress_type=zipfile.ZIP_DEFLATED)
+                    backup_zip.close()
+                    print(self.Command[1] + 'backup succed')
+
+            elif self.Command[0]=="Restore" and self.Command[1]:
+                if os.path.exists(self.Database_Path):
+                    print(self.Command[1] + ' Database is exist')
+                else:
+                    restore_zip = zipfile.ZipFile(self.Command[1], 'r')
+                    restore_zip.extractall("databases")
+                    restore_zip.close()
+                    print("restore succ")
+
             else:
                 print('Error Commmand ',self.Command)
 
@@ -283,10 +308,12 @@ if __name__ == '__main__' :
     fileparser.add_argument('-Check', default="", nargs=2,help='check your var ture or false before into a databaselist')
     fileparser.add_argument('-sort', default=False, help='sort the databaselist')
     fileparser.add_argument('-info', default=False, help='true to get command info next')
+    fileparser.add_argument('-Backup',default=False,help='backup your database')
+    fileparser.add_argument('-Restore',default="",help='restore your database')
     fileparser.add_argument('-Shell', default=False, help='shell mode')
 
     fileargs = fileparser.parse_args()
-    file_args_list = [""] * 16
+    file_args_list = [""] * 18
     try:
         file_args_list[0] = fileargs.Account
         file_args_list[1] = fileargs.Password
@@ -304,6 +331,8 @@ if __name__ == '__main__' :
         file_args_list[13] = fileargs.Update
         file_args_list[14] = fileargs.sort
         file_args_list[15] = fileargs.Shell
+        file_args_list[16] = fileargs.Backup
+        file_args_list[17] = fileargs.Restore
 
     except IOError:
         print(IOError)
